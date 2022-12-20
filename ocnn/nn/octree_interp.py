@@ -120,9 +120,10 @@ class OctreeInterp(torch.nn.Module):
 
     # rescale points from [-1, 1] to [0, 2^depth]
     if self.rescale_pts:
-      scale = 2 ** (depth - 1)
-      pts[:, :3] = (pts[:, :3] + 1.0) * scale
-
+        scale = 2 ** (depth - 1)
+        scaled_coords = (pts[:, :3] + 1.0) * scale
+        pts = torch.cat([scaled_coords, pts[:, 3:4]
+    
     return self.func(data, octree, depth, pts, self.nempty, self.bound_check)
 
   def extra_repr(self) -> str:
