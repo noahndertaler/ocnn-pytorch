@@ -8,7 +8,7 @@
 import torch
 import torch.sparse
 from typing import List, Optional
-
+import torch_sparse
 import ocnn
 from ocnn.octree import Octree
 
@@ -89,12 +89,9 @@ def octree_linear_pts(data: torch.Tensor, octree: Octree, depth: int,
   weight = weight[valid]
 
   h = data.shape[0]
-  mat = torch.sparse_coo_tensor(indices, weight, [npt, h], device=device)
-
-  # 3. Interpolatation
-  output = torch.sparse.mm(mat, data)
+  output = torch_sparse.spmm(indices, weight, npt, h, data)
   ones = torch.ones(h, 1, dtype=data.dtype, device=device)
-  norm = torch.sparse.mm(mat, ones)
+  norm = torch_sparse.spmm(indices, weight, npt, h, ones)
   output = torch.div(output, norm + 1e-12)
   return output
 
