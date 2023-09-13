@@ -8,9 +8,8 @@
 SOLVER:
   gpu: 0,
   run: train
-  best_val: max:mIoU
 
-  logdir: logs/ae_shapenet/ae
+  logdir: logs/completion/shapenet
   max_epoch: 300
   test_every_epoch: 20
   log_per_iter: 50
@@ -27,7 +26,7 @@ SOLVER:
 
 DATA:
   train:
-    name: shapenet
+    name: completion
     points_scale: 128
 
     # octree building
@@ -37,7 +36,7 @@ DATA:
     # no data augmentations
     distort: False
 
-    # data loading
+    # data loading, reuse the data for autoencoder
     location: data/ae_shapenet/shape.npz
     filelist: data/ae_shapenet/filelist_train.npz.txt
     batch_size: 32
@@ -45,7 +44,7 @@ DATA:
     # num_workers: 0
 
   test:
-    name: shapenet
+    name: completion
 
     # octree building
     depth: 6
@@ -62,9 +61,9 @@ DATA:
     # num_workers: 0
 
 MODEL:
-  name: autoencoder
-  feature: ND   # N -> Normal (3 channels); D -> Local displacement (1 channel)
-  channel: 4
+  name: ounet
+  feature: L   # L -> Local coordinates (3 channel)
+  channel: 3
   nout: 4
   depth: 6
   full_depth: 2

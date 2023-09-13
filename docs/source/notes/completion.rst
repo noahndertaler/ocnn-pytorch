@@ -1,4 +1,4 @@
-AutoEncoder
+Completion
 ===========================
 
 
@@ -19,20 +19,20 @@ ShapeNet
 
 
 #. Run the following command to train the network. The training log and weights
-   can be downloaded `here <https://1drv.ms/u/s!Ago-xIr0OR2-eSg3Qxu1oNUo9ZY?e=vibpol>`__.
+   can be downloaded `here <https://1drv.ms/u/s!Ago-xIr0OR2-f0Vdyu9F-mB09SY?e=4C9Apk>`__.
 
    .. code-block:: none
 
-      python autoencoder.py --config configs/ae_shapenet.yaml
+      python completion.py --config configs/completion.yaml
 
 
 #. Run the following command to get the predictions on the testing dataest. The 
    parameter following ``SOLVER.ckpt`` can be freely modified to test different
-   trained weights. And the results are in the folder ``logs/ae_shapenet/ae_eval``.
+   trained weights. And the results are in the folder ``logs/completion/shapenet_eval``.
 
    .. code-block:: none
 
-      python autoencoder.py --config configs/ae_shapenet.yaml             \
+      python completion.py --config configs/completion.yaml               \
              SOLVER.run evaluate  SOLVER.alias eval                       \
-             SOLVER.ckpt logs/ae_shapenet/ae/checkpoints/00300.model.pth
+             SOLVER.ckpt logs/completion/shapenet/checkpoints/00300.model.pth
 

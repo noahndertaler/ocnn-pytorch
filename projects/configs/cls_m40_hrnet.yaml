@@ -9,8 +9,9 @@ SOLVER:
   gpu: 0,
   run: train
   type: sgd
+  best_val: max:accu
 
-  logdir: logs/m40/d6
+  logdir: logs/m40/hrnet
   max_epoch: 280
   test_every_epoch: 5
 

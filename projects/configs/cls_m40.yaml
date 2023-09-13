@@ -9,6 +9,7 @@ SOLVER:
   gpu: 0,
   run: train
   type: sgd
+  best_val: max:accu
 
   logdir: logs/m40/d5
   max_epoch: 300
@@ -69,7 +70,7 @@ MODEL:
   feature: ND   # N -> Normal (3 channels);
                 # D -> Local displacement (1 channel)
   nempty: False
-  stages: 3
+  stages: 3     # !!! `stages` should increase with `depth` accordingly
   channel: 4
   nout: 40
 

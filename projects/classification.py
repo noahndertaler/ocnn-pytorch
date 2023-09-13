@@ -6,12 +6,14 @@
 # --------------------------------------------------------
 
 import torch
-import torch.nn.functional as F
 import ocnn
-from thsolver import Solver
 
+from thsolver import Solver
 from datasets import get_modelnet40_dataset
 
+# The following line can be used to fix `RuntimeError: received 0 items of ancdata`.
+# Refer: https://github.com/pytorch/pytorch/issues/973
+# torch.multiprocessing.set_sharing_strategy('file_system')
 
 class ClsSolver(Solver):
 
@@ -38,12 +40,16 @@ class ClsSolver(Solver):
     data = octree_feature(octree)
     return data
 
+  def loss_function(self, logit, label):
+    criterion = torch.nn.CrossEntropyLoss()
+    loss = criterion(logit, label.long())
+    return loss
+
   def forward(self, batch):
     octree, label = batch['octree'].cuda(), batch['label'].cuda()
     data = self.get_input_feature(octree)
     logits = self.model(data, octree, octree.depth)
-    log_softmax = F.log_softmax(logits, dim=1)
-    loss = F.nll_loss(log_softmax, label)
+    loss = self.loss_function(logits, label)
     pred = torch.argmax(logits, dim=1)
     accu = pred.eq(label).float().mean()
     return loss, accu

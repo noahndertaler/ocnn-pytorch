@@ -3,7 +3,7 @@
 **[Documentation](https://ocnn-pytorch.readthedocs.io)**
 
 [![Documentation Status](https://readthedocs.org/projects/ocnn-pytorch/badge/?version=latest)](https://ocnn-pytorch.readthedocs.io/en/latest/?badge=latest)
-[![downloads](https://pepy.tech/badge/ocnn)](https://pepy.tech/project/ocnn)
+[![Downloads](https://static.pepy.tech/badge/ocnn)](https://pepy.tech/project/ocnn)
 [![PyPI](https://img.shields.io/pypi/v/ocnn)](https://pypi.org/project/ocnn/)
 
 This repository contains the **pure PyTorch**-based implementation of
@@ -36,7 +36,7 @@ research community.
 ## Key benefits of ocnn-pytorch
 
 - **Simplicity**. The ocnn-pytorch is based on pure PyTorch, it is portable and
-  can be intalled with a simple command:`pip install ocnn`. Other sparse
+  can be installed with a simple command:`pip install ocnn`. Other sparse
   convolution frameworks heavily rely on C++ and CUDA, and it is complicated to
   configure the compiling environment.
 

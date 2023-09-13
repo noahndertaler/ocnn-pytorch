@@ -10,9 +10,14 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import ocnn
-from thsolver import Solver, get_config
 
+from ocnn.octree import Octree
+from thsolver import Solver, get_config
 from datasets import get_ae_shapenet_dataset
+
+# The following line is to fix `RuntimeError: received 0 items of ancdata`.
+# Refer: https://github.com/pytorch/pytorch/issues/973
+torch.multiprocessing.set_sharing_strategy('file_system')
 
 
 class AutoEncoderSolver(Solver):
@@ -27,7 +32,7 @@ class AutoEncoderSolver(Solver):
 
   def get_ground_truth_signal(self, octree):
     flags = self.FLAGS.MODEL
-    octree_feature = ocnn.modules.InputFeature(flags.feature, nempty=True)
+    octree_feature = ocnn.modules.InputFeature('ND', nempty=True)
     data = octree_feature(octree)
     return data
 
@@ -69,12 +74,11 @@ class AutoEncoderSolver(Solver):
 
   def eval_step(self, batch):
     # forward the model
-    octree = batch['octree'].cuda()
-    output = self.model(octree, update_octree=True)
+    octree_in = batch['octree'].cuda(non_blocking=True)
+    output = self.model(octree_in, update_octree=True)
     points_out = self.octree2pts(output['octree_out'])
 
     # save the output point clouds
-    # NOTE: Curretnly, it consumes much time to save point clouds to hard disks
     points_in = batch['points']
     filenames = batch['filename']
     for i, filename in enumerate(filenames):
@@ -82,14 +86,13 @@ class AutoEncoderSolver(Solver):
       if pos != -1: filename = filename[:pos]  # remove the suffix
       filename_in = os.path.join(self.logdir, filename + '.in.xyz')
       filename_out = os.path.join(self.logdir, filename + '.out.xyz')
+      os.makedirs(os.path.dirname(filename_in), exist_ok=True)
 
-      folder = os.path.dirname(filename_in)
-      if not os.path.exists(folder): os.makedirs(folder)
-
+      # NOTE: it consumes much time to save point clouds to hard disks
       points_in[i].save(filename_in)
       np.savetxt(filename_out, points_out[i].cpu().numpy(), fmt='%.6f')
 
-  def octree2pts(self, octree: ocnn.octree.Octree):
+  def octree2pts(self, octree: Octree):
     depth = octree.depth
     batch_size = octree.batch_size
 
@@ -99,8 +102,6 @@ class AutoEncoderSolver(Solver):
 
     x, y, z, _ = octree.xyzb(depth, nempty=True)
     xyz = torch.stack([x, y, z], dim=1) + 0.5 + displacement * normal
-    # points_scale = self.FLAGS.DATA.test.points_scale
-    # xyz = xyz * (points_scale / 2**depth)
     xyz = xyz / 2**(depth - 1) - 1.0  # [0, 2^depth] -> [-1, 1]
     point_cloud = torch.cat([xyz, normal], dim=1)
 
