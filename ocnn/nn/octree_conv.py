@@ -330,7 +330,7 @@ class OctreeConv(OctreeConvBase, torch.nn.Module):
     self.use_bias = use_bias
     self.weights = torch.nn.Parameter(torch.Tensor(*self.weights_shape))
     if self.use_bias:
-      self.bias = torch.nn.Parameter(torch.Tensor(out_channels))
+      self.bias = torch.nn.Parameter(torch.Tensor(out_channels).float())
     self.reset_parameters()
 
   def reset_parameters(self):

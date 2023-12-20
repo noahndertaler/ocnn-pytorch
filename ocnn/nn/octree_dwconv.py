@@ -176,7 +176,7 @@ class OctreeDWConv(OctreeDWConvBase, torch.nn.Module):
     self.use_bias = use_bias
     self.weights = torch.nn.Parameter(torch.Tensor(*self.weights_shape))
     if self.use_bias:
-      self.bias = torch.nn.Parameter(torch.Tensor(in_channels))
+      self.bias = torch.nn.Parameter(torch.Tensor(in_channels).float())
     self.reset_parameters()
 
   def reset_parameters(self):
